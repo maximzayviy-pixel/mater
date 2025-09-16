@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: mattermost
+    env: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromService:
+          name: postgres
+          type: pserv
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: "mattermost"
+      - key: DB_USER
+        value: "mmuser"
+      - key: DB_PASSWORD
+        sync: false   # set to match POSTGRES_PASSWORD below
+      - key: MM_SERVICESETTINGS_SITEURL
+        value: ""     # set your https://domain later or leave empty for testing
+    disk:
+      name: mm-data
+      mountPath: /mattermost/data
+      sizeGB: 10
+
+  - type: pserv
+    name: postgres
+    env: docker
+    plan: starter
+    autoDeploy: true
+    dockerfilePath: ./postgres/Dockerfile
+    envVars:
+      - key: POSTGRES_DB
+        value: "mattermost"
+      - key: POSTGRES_USER
+        value: "mmuser"
+      - key: POSTGRES_PASSWORD
+        sync: false  # copy this value into DB_PASSWORD in the web service
+    disk:
+      name: pg-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
