@@ -1,25 +1,34 @@
 services:
   - type: web
     name: mattermost
-    env: docker
+    env: image
     plan: starter
     autoDeploy: true
+    image:
+      url: mattermost/mattermost-team-edition:10.11.1
     healthCheckPath: /
     envVars:
+      - key: MM_SQLSETTINGS_DRIVERNAME
+        value: postgres
+      - key: MM_SQLSETTINGS_DATASOURCE
+        # postgres://USER:PASSWORD@HOST:PORT/DB?sslmode=disable&connect_timeout=10
+        value: "postgres://mmuser:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/mattermost?sslmode=disable&connect_timeout=10"
       - key: DB_HOST
         fromService:
           name: postgres
           type: pserv
       - key: DB_PORT
         value: "5432"
-      - key: DB_NAME
-        value: "mattermost"
-      - key: DB_USER
-        value: "mmuser"
       - key: DB_PASSWORD
-        sync: false   # set equal to POSTGRES_PASSWORD
+        sync: false   # set to match POSTGRES_PASSWORD below
+      - key: MM_SERVICESETTINGS_LISTENADDRESS
+        value: ":8065"
+      - key: MM_FILESETTINGS_DIRECTORY
+        value: "/mattermost/data"
+      - key: MM_PLUGINSETTINGS_ENABLEUPLOADS
+        value: "true"
       - key: MM_SERVICESETTINGS_SITEURL
-        value: ""     # set to your https://domain if you have one
+        value: ""   # set to your HTTPS domain later, or leave empty
     disk:
       name: mm-data
       mountPath: /mattermost/data
@@ -27,17 +36,18 @@ services:
 
   - type: pserv
     name: postgres
-    env: docker
+    env: image
     plan: starter
     autoDeploy: true
-    dockerfilePath: ./postgres/Dockerfile
+    image:
+        url: postgres:16-alpine
     envVars:
       - key: POSTGRES_DB
         value: "mattermost"
       - key: POSTGRES_USER
         value: "mmuser"
       - key: POSTGRES_PASSWORD
-        sync: false
+        sync: false  # copy to DB_PASSWORD in mattermost service
     disk:
       name: pg-data
       mountPath: /var/lib/postgresql/data
