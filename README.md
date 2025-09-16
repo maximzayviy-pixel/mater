@@ -1,16 +1,13 @@
-# Mattermost on Render (Image mode)
+# Mattermost on Render (fixed blueprint)
 
-This blueprint deploys Mattermost Team Edition directly from the official image,
-avoiding custom Dockerfiles (no distroless shell issues). It also provisions a private
-Postgres with a persistent disk.
+This blueprint wires Mattermost directly to the private Postgres using
+`fromService.property: connectionString`, so you don't need to assemble the DSN manually.
 
 ## Deploy
-1. Push this repo (just this `render.yaml`) to GitHub.
-2. In Render: **New → Blueprint** → paste repo URL → Deploy.
-3. After services are created:
-   - Open **postgres → Environment**, copy `POSTGRES_PASSWORD`.
-   - Open **mattermost → Environment**, set **DB_PASSWORD** to the same value → Save → Redeploy.
-   - (Optional) Set `MM_SERVICESETTINGS_SITEURL` to your domain (e.g. `https://chat.example.com`).
-
-## Calls
-Enable **System Console → Plugins → Mattermost Calls**. For external users, configure a TURN server.
+1) Push this repo to GitHub.
+2) In Render: New → Blueprint → paste repo URL → Deploy.
+3) After creation:
+   - (Optional) set `MM_SERVICESETTINGS_SITEURL` in the **mattermost** service to your domain.
+   - Redeploy if you change env.
+4) Open the Mattermost URL and complete the setup wizard.
+5) Enable **System Console → Plugins → Mattermost Calls** for voice/video.

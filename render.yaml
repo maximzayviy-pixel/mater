@@ -11,16 +11,10 @@ services:
       - key: MM_SQLSETTINGS_DRIVERNAME
         value: postgres
       - key: MM_SQLSETTINGS_DATASOURCE
-        # postgres://USER:PASSWORD@HOST:PORT/DB?sslmode=disable&connect_timeout=10
-        value: "postgres://mmuser:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/mattermost?sslmode=disable&connect_timeout=10"
-      - key: DB_HOST
         fromService:
           name: postgres
           type: pserv
-      - key: DB_PORT
-        value: "5432"
-      - key: DB_PASSWORD
-        sync: false   # set to match POSTGRES_PASSWORD below
+          property: connectionString
       - key: MM_SERVICESETTINGS_LISTENADDRESS
         value: ":8065"
       - key: MM_FILESETTINGS_DIRECTORY
@@ -28,7 +22,7 @@ services:
       - key: MM_PLUGINSETTINGS_ENABLEUPLOADS
         value: "true"
       - key: MM_SERVICESETTINGS_SITEURL
-        value: ""   # set to your HTTPS domain later, or leave empty
+        value: ""   # set to your HTTPS domain later
     disk:
       name: mm-data
       mountPath: /mattermost/data
@@ -40,14 +34,14 @@ services:
     plan: starter
     autoDeploy: true
     image:
-        url: postgres:16-alpine
+      url: postgres:16-alpine
     envVars:
       - key: POSTGRES_DB
         value: "mattermost"
       - key: POSTGRES_USER
         value: "mmuser"
       - key: POSTGRES_PASSWORD
-        sync: false  # copy to DB_PASSWORD in mattermost service
+        generateValue: true
     disk:
       name: pg-data
       mountPath: /var/lib/postgresql/data
