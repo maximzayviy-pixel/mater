@@ -1,16 +1,14 @@
-# Mattermost on Render — Literal DSN
+# Mattermost on Render (with explicit Postgres hostname)
 
-Render doesn't substitute env vars inside values, and pservs don't expose a `connectionString` property.
-Use a **literal** DSN and the same password in both services.
+This blueprint pins the DSN to the actual pserv hostname `postgres-74j4`,
+so you don't need to adjust the env var manually in the dashboard.
 
 ## Steps
-1) Edit `render.yaml`:
-   - Replace **__PASTE_SAME_PASSWORD__** in **both** places with the same strong password.
-     - If the password contains special characters, **URL-encode** it in the DSN (e.g., `@` → `%40`, `:` → `%3A`, `/` → `%2F`, `?` → `%3F`, `#` → `%23`, `&` → `%26`).
-2) Push to GitHub → Render → New → Blueprint → Deploy.
-3) After deploy, open the Mattermost URL and go through the setup wizard.
-4) Enable Calls in **System Console → Plugins → Mattermost Calls**.
+1. Replace `__PASTE_SAME_PASSWORD__` with your chosen strong password in both places.
+   - If it contains special chars, URL-encode them in the DSN.
+2. Push to GitHub → Render → New → Blueprint → Deploy.
+3. Open the Mattermost URL, complete the setup wizard.
+4. Enable **System Console → Plugins → Mattermost Calls** for voice/video.
 
-## Example DSN
-postgres://mmuser:MyStrongPass123%21@postgres:5432/mattermost?sslmode=disable&connect_timeout=10
-(Note `%21` is `!`)
+Example DSN (with URL-encoded `!`):
+postgres://mmuser:MyStrongPass123%21@postgres-74j4:5432/mattermost?sslmode=disable&connect_timeout=10
