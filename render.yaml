@@ -17,9 +17,9 @@ services:
       - key: DB_USER
         value: "mmuser"
       - key: DB_PASSWORD
-        sync: false   # set to match POSTGRES_PASSWORD below
+        sync: false   # set equal to POSTGRES_PASSWORD
       - key: MM_SERVICESETTINGS_SITEURL
-        value: ""     # set your https://domain later or leave empty for testing
+        value: ""     # set to your https://domain if you have one
     disk:
       name: mm-data
       mountPath: /mattermost/data
@@ -37,7 +37,7 @@ services:
       - key: POSTGRES_USER
         value: "mmuser"
       - key: POSTGRES_PASSWORD
-        sync: false  # copy this value into DB_PASSWORD in the web service
+        sync: false
     disk:
       name: pg-data
       mountPath: /var/lib/postgresql/data

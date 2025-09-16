@@ -1,8 +1,8 @@
-FROM mattermost/mattermost-team-edition:latest
+FROM mattermost/mattermost-team-edition:9.11.3-alpine
 
-# Copy custom entrypoint to compose DB connection string from env
+# Copy custom entrypoint (handles DB env & waits for Postgres)
 COPY entrypoint.sh /mm-entrypoint.sh
 RUN chmod +x /mm-entrypoint.sh
 
 EXPOSE 8065
-CMD ["/mm-entrypoint.sh"]
+ENTRYPOINT ["/mm-entrypoint.sh"]
