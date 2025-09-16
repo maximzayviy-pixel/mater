@@ -1,13 +1,16 @@
-# Mattermost on Render (fixed blueprint)
+# Mattermost on Render — Literal DSN
 
-This blueprint wires Mattermost directly to the private Postgres using
-`fromService.property: connectionString`, so you don't need to assemble the DSN manually.
+Render doesn't substitute env vars inside values, and pservs don't expose a `connectionString` property.
+Use a **literal** DSN and the same password in both services.
 
-## Deploy
-1) Push this repo to GitHub.
-2) In Render: New → Blueprint → paste repo URL → Deploy.
-3) After creation:
-   - (Optional) set `MM_SERVICESETTINGS_SITEURL` in the **mattermost** service to your domain.
-   - Redeploy if you change env.
-4) Open the Mattermost URL and complete the setup wizard.
-5) Enable **System Console → Plugins → Mattermost Calls** for voice/video.
+## Steps
+1) Edit `render.yaml`:
+   - Replace **__PASTE_SAME_PASSWORD__** in **both** places with the same strong password.
+     - If the password contains special characters, **URL-encode** it in the DSN (e.g., `@` → `%40`, `:` → `%3A`, `/` → `%2F`, `?` → `%3F`, `#` → `%23`, `&` → `%26`).
+2) Push to GitHub → Render → New → Blueprint → Deploy.
+3) After deploy, open the Mattermost URL and go through the setup wizard.
+4) Enable Calls in **System Console → Plugins → Mattermost Calls**.
+
+## Example DSN
+postgres://mmuser:MyStrongPass123%21@postgres:5432/mattermost?sslmode=disable&connect_timeout=10
+(Note `%21` is `!`)
