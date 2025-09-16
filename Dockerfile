@@ -1,4 +1,4 @@
-FROM mattermost/mattermost-team-edition:9
+FROM mattermost/mattermost-team-edition:latest
 
 # Copy custom entrypoint to compose DB connection string from env
 COPY entrypoint.sh /mm-entrypoint.sh
